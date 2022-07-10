@@ -1,6 +1,8 @@
 import smtplib
-import email.mime.text import MIMEText
+from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 
 sender= "usualhotmailemail@hotmail.com"
@@ -17,9 +19,17 @@ body= """
 There are only two cats flying today!
 Let's hope for more!
 """
-
 mimetext= MIMEText(body, "html")
 message.attach(mimetext)
+
+attachment_path= "att.txt"
+attachment_file= open(attachment_path, "rb")
+payload= MIMEBase("application", "octate-stream")
+payload.set_payload(attachment_file.read())
+encoders.encode_base64(payload)
+payload.add_header("Content-Disposition","attachment", filename= attachment_path)
+message.attach(payload)
+
 
 server= smtplib.SMTP("smtp.office365.com", 587)
 server.starttls()
